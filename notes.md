@@ -67,6 +67,9 @@
   instruction (prompt injection) — so jail first, wire second.
 - `read_file`: resolve the path and require it to stay under project root
   (`is_relative_to`); `../../.ssh/id_rsa` returns an error string, not data.
+- Reads are allowed in TWO roots — project + `~/.agents/skills` — so the
+  agent can follow skill-referenced sibling files (e.g. TDD's `mocking.md`).
+  Bash stays project-jailed: reading outside is safe, executing outside isn't.
 - `bash`: fixed cwd (project root), 30s timeout, truncated output, small
   denylist (`rm -rf`, `sudo`, …). Denylists are theater against a real
   adversary — the cwd jail + timeout do the real work.
@@ -81,6 +84,8 @@
   discover); `load_skill(name)` returns the full instructions, jailed to
   `skills/`. Bodies stay out of context until relevant — same pattern as
   Claude Code skills.
+- Two roots: project `skills/` first, then `~/.agents/skills` (tagged
+  `[global]`), project wins on collision. 38 skills live, zero copies.
 
 ## 9. Gotchas we actually hit
 - **Wrong interpreter**: system python has no deps → `ModuleNotFoundError`.

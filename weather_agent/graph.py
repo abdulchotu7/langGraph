@@ -7,6 +7,7 @@ from langgraph.prebuilt import ToolNode, tools_condition
 from pathlib import Path
 
 from weather_agent.tools import bash, call_weather_api, convert_currency, list_skills, load_skill, patch_file, read_file, search_wikipedia, write_file
+from weather_agent.tools.skills import skill_overview
 
 model = ChatGoogleGenerativeAI(model="gemini-3.5-flash-lite", max_retries=2)
 model_with_tools = model.bind_tools([bash, call_weather_api, convert_currency, list_skills, load_skill, patch_file, read_file, search_wikipedia, write_file])
@@ -32,9 +33,12 @@ SYSTEM = SystemMessage(
         "after one or two files. But stay scoped: for a surgical task, read "
         "only the files the task touches — don't survey the whole repo. "
         "Run Python via `uv run` or `.venv/bin/python`, never bare `python3`. "
-        "Keep answers short and name the source (city, rate date, article title)."
-    )
+        "Keep answers short and name the source (city, rate date, article title). "
+        "If a task might match a saved procedure (see skill menu below), "
+        "call load_skill(name) for its instructions and follow them. "    )
     + _repo_conventions()
+    + "\n\nAvailable skills (call load_skill(name) for instructions):\n"
+    + "\n".join(skill_overview())
 )
 
 
