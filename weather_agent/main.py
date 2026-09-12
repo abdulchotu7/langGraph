@@ -1,7 +1,7 @@
 """Entrypoint: uv run weather-agent | .venv/bin/python -m weather_agent.main"""
 
-from . import config as _config  # noqa: F401 — validates env on import
-from .graph import graph
+from weather_agent import config as _config  # noqa: F401 — validates env on import
+from weather_agent.graph import graph
 
 
 def main() -> None:

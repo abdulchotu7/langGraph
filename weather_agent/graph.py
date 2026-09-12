@@ -4,7 +4,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langgraph.graph import START, MessagesState, StateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
 
-from .tools import call_weather_api
+from weather_agent.tools import call_weather_api
 
 model = ChatGoogleGenerativeAI(model="gemini-3.5-flash-lite", max_retries=2)
 model_with_tools = model.bind_tools([call_weather_api])
