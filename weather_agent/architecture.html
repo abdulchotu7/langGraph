@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather Agent Architecture — LangGraph & Design Engineering</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #09090b;
+      color: #f4f4f5;
+    }
+    .glass {
+      background: rgba(24, 24, 27, 0.75);
+      backdrop-filter: blur(16px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-hover:hover {
+      background: rgba(39, 39, 42, 0.85);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #60a5fa 0%, #c084fc 50%, #f472b6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .node-card {
+      transition: all 250s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .node-card:active {
+      transform: scale(0.98);
+    }
+  </style>
+</head>
+<body class="h-full antialiased selection:bg-purple-500 selection:text-white pb-24">
+
+  <!-- Top Navigation / Header -->
+  <header class="border-b border-white/10 sticky top-0 z-50 glass">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center font-bold text-white shadow-lg shadow-purple-500/20">
+          WA
+        </div>
+        <div>
+          <h1 class="font-semibold text-sm tracking-tight text-white">Weather Agent Architecture</h1>
+          <p class="text-xs text-zinc-400">LangGraph 0.2+ • Gemini Flash Lite • Apple / Emil Design System</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-3">
+        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>
+          System Operational
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 pt-12 space-y-16">
+
+    <!-- Hero Section -->
+    <section class="text-center space-y-4 max-w-3xl mx-auto">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full glass text-xs text-purple-300 font-medium">
+        <span>⚡️ Design Engineering Spec</span>
+      </div>
+      <h2 class="text-4xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
+        An AI agent that feels like <span class="gradient-text">an extension of you.</span>
+      </h2>
+      <p class="text-zinc-400 text-base sm:text-lg leading-relaxed">
+        Merging LangGraph's deterministic state machines with Apple's fluid interface principles and Emil Kowalski's craft standards for zero-latency feedback, progressive disclosure, and robust safety.
+      </p>
+    </section>
+
+    <!-- Interactive Architecture Diagram -->
+    <section class="space-y-6">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-semibold text-white tracking-tight flex items-center space-x-2">
+          <span>State Graph & Control Flow</span>
+        </h3>
+        <span class="text-xs text-zinc-500 font-mono">click nodes for details</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        
+        <!-- Node 1: Start -->
+        <div class="glass p-5 rounded-xl node-card relative overflow-hidden group">
+          <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-mono text-blue-400 uppercase tracking-wider">Entrypoint</span>
+            <span class="text-xs text-zinc-500 font-mono">01</span>
+          </div>
+          <h4 class="font-semibold text-white text-base mb-1">START / main.py</h4>
+          <p class="text-xs text-zinc-400 leading-relaxed">Zero I/O on import. Graph loaded pure, execution bound strictly to entrypoint.</p>
+        </div>
+
+        <!-- Node 2: Model -->
+        <div class="glass p-5 rounded-xl node-card relative overflow-hidden group border-purple-500/30">
+          <div class="absolute top-0 left-0 w-1 h-full bg-purple-500"></div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-mono text-purple-400 uppercase tracking-wider">Reasoning</span>
+            <span class="text-xs text-zinc-500 font-mono">02</span>
+          </div>
+          <h4 class="font-semibold text-white text-base mb-1">model node</h4>
+          <p class="text-xs text-zinc-400 leading-relaxed">Gemini Flash Lite + System Prompt + AGENTS.md + lazy skills overview.</p>
+        </div>
+
+        <!-- Node 3: Tools Condition -->
+        <div class="glass p-5 rounded-xl node-card relative overflow-hidden group">
+          <div class="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-mono text-amber-400 uppercase tracking-wider">Conditional</span>
+            <span class="text-xs text-zinc-500 font-mono">03</span>
+          </div>
+          <h4 class="font-semibold text-white text-base mb-1">tools_condition</h4>
+          <p class="text-xs text-zinc-400 leading-relaxed">Routes to ToolNode if tool calls are requested; otherwise exits to user.</p>
+        </div>
+
+        <!-- Node 4: Tools Execution -->
+        <div class="glass p-5 rounded-xl node-card relative overflow-hidden group">
+          <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-mono text-emerald-400 uppercase tracking-wider">Execution</span>
+            <span class="text-xs text-zinc-500 font-mono">04</span>
+          </div>
+          <h4 class="font-semibold text-white text-base mb-1">tools (ToolNode)</h4>
+          <p class="text-xs text-zinc-400 leading-relaxed">Weather, currency, wikipedia & sandbox file/bash tools with strict sandboxing.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Architecture Pillars: Apple & Emil Principles -->
+    <section class="space-y-6">
+      <h3 class="text-lg font-semibold text-white tracking-tight">Design Engineering Pillars</h3>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Pillar 1 -->
+        <div class="glass p-6 rounded-2xl space-y-4">
+          <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 font-bold">
+            01
+          </div>
+          <h4 class="text-white font-semibold text-lg">Perceived Speed & Response</h4>
+          <p class="text-sm text-zinc-400 leading-relaxed">
+            Using lightweight models and minimal system prompt weight ensures sub-second time-to-first-token. Following Emil's rule that speed dictates perceived quality.
+          </p>
+          <div class="pt-2 border-t border-white/5 font-mono text-xs text-zinc-500">
+            Target: &lt; 300ms model TTFT
+          </div>
+        </div>
+
+        <!-- Pillar 2 -->
+        <div class="glass p-6 rounded-2xl space-y-4">
+          <div class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 font-bold">
+            02
+          </div>
+          <h4 class="text-white font-semibold text-lg">Progressive Disclosure</h4>
+          <p class="text-sm text-zinc-400 leading-relaxed">
+            Instead of cluttering the prompt with entire skill manuals, the agent inspects a lightweight overview and lazy-loads instructions via <code class="text-purple-300 font-mono text-xs">load_skill</code> only when needed.
+          </p>
+          <div class="pt-2 border-t border-white/5 font-mono text-xs text-zinc-500">
+            Pattern: On-demand context hydration
+          </div>
+        </div>
+
+        <!-- Pillar 3 -->
+        <div class="glass p-6 rounded-2xl space-y-4">
+          <div class="w-10 h-10 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400 font-bold">
+            03
+          </div>
+          <h4 class="text-white font-semibold text-lg">Responsibility & Safety</h4>
+          <p class="text-sm text-zinc-400 leading-relaxed">
+            Filesystem and bash tools are rigidly sandboxed to project root. Mandatory citations (city names, rate dates) ensure factual integrity with zero guessing.
+          </p>
+          <div class="pt-2 border-t border-white/5 font-mono text-xs text-zinc-500">
+            Pattern: Absolute path boundary checks
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Component Comparison Table -->
+    <section class="space-y-6">
+      <h3 class="text-lg font-semibold text-white tracking-tight">System Craft Audit</h3>
+      
+      <div class="glass rounded-2xl overflow-hidden border border-white/10">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b border-white/10 bg-white/[0.02]">
+              <th class="py-4 px-6 text-xs font-mono uppercase tracking-wider text-zinc-400">Before / Standard</th>
+              <th class="py-4 px-6 text-xs font-mono uppercase tracking-wider text-emerald-400">Our Architecture After</th>
+              <th class="py-4 px-6 text-xs font-mono uppercase tracking-wider text-zinc-400">Why (Design Engineering Rationale)</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5 text-sm">
+            <tr>
+              <td class="py-4 px-6 font-mono text-xs text-zinc-400">Monolithic system prompt with all skill docs</td>
+              <td class="py-4 px-6 font-mono text-xs text-emerald-300">Lazy-loaded `skill_overview()` + `load_skill`</td>
+              <td class="py-4 px-6 text-zinc-400">Keeps context clean and saves token budget for complex reasoning tasks.</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 font-mono text-xs text-zinc-400">Relative imports (`from .tools import ...`)</td>
+              <td class="py-4 px-6 font-mono text-xs text-emerald-300">Absolute package imports (`weather_agent.tools`)</td>
+              <td class="py-4 px-6 text-zinc-400">Prevents LangGraph CLI server load errors and circular dependency traps.</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 font-mono text-xs text-zinc-400">Bare python execution (`python3`)</td>
+              <td class="py-4 px-6 font-mono text-xs text-emerald-300">`uv run` or `.venv/bin/python`</td>
+              <td class="py-4 px-6 text-zinc-400">Guarantees dependency isolation against system python runtimes.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="max-w-7xl mx-auto px-6 mt-24 pt-8 border-t border-white/10 text-center text-xs text-zinc-500">
+    Weather Agent Architecture Specification • Built with LangGraph, Apple Design & Emil Kowalski Principles
+  </footer>
+
+</body>
+</html>

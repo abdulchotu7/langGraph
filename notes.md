@@ -87,7 +87,14 @@
 - Two roots: project `skills/` first, then `~/.agents/skills` (tagged
   `[global]`), project wins on collision. 38 skills live, zero copies.
 
-## 9. Gotchas we actually hit
+## 9. MCP (fff file search)
+- MCP tools join the same two lists via `MultiServerMCPClient` (stdio) +
+  `asyncio.run(client.get_tools())` once at startup. No special casing —
+  `bind_tools`/`ToolNode` treat them like locals. 12 tools now, 3 via MCP.
+- Binary resolved env → PATH → `~/.local/bin`, fail fast if missing.
+- New *dependency* (pyproject) needs a server restart — hot reload can't pip-install.
+
+## 10. Gotchas we actually hit
 - **Wrong interpreter**: system python has no deps → `ModuleNotFoundError`.
   Always `.venv/bin/python` or `uv run`.
 - **`getpass` on import crashes non-tty runs** (`EOFError`). Read keys from
