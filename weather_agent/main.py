@@ -5,7 +5,7 @@ from .graph import graph
 
 
 def main() -> None:
-    result = graph.invoke({"messages": [{"role": "user", "content": "what is the weather in London?"}]})
+    result = graph.invoke({"messages": [{"role": "user", "content": "what is the weather in Delhi?"}]})
     print(result["messages"][-1].content)
 
 
