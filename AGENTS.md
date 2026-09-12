@@ -12,6 +12,8 @@ Tech stack:
 Layout (standard package, flat):
 - weather_agent/config.py — env loading, fails fast if keys missing
 - weather_agent/tools/ — one file per tool, exported via __init__.py
+- weather_agent/mcp.py — MCP server loading (fff file search)
+- weather_agent/prompt.py — system prompt assembly (rules + AGENTS.md + skill menu)
 - weather_agent/graph.py — pure graph definition (no I/O on import)
 - weather_agent/main.py — entrypoint only
 
