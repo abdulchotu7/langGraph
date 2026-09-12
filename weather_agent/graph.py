@@ -5,10 +5,10 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langgraph.graph import START, MessagesState, StateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
 
-from weather_agent.tools import call_weather_api, convert_currency, search_wikipedia
+from weather_agent.tools import bash, call_weather_api, convert_currency, read_file, search_wikipedia
 
 model = ChatGoogleGenerativeAI(model="gemini-3.5-flash-lite", max_retries=2)
-model_with_tools = model.bind_tools([call_weather_api, convert_currency, search_wikipedia])
+model_with_tools = model.bind_tools([bash, call_weather_api, convert_currency, read_file, search_wikipedia])
 
 
 SYSTEM = SystemMessage(
@@ -30,7 +30,7 @@ def call_model(state: MessagesState):
 
 graph = StateGraph(MessagesState)
 graph.add_node("model", call_model)
-graph.add_node("tools", ToolNode([call_weather_api, convert_currency, search_wikipedia]))
+graph.add_node("tools", ToolNode([bash, call_weather_api, convert_currency, read_file, search_wikipedia]))
 graph.add_edge(START, "model")
 graph.add_conditional_edges("model", tools_condition)
 graph.add_edge("tools", "model")

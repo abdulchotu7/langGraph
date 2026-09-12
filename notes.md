@@ -59,7 +59,18 @@
 - Ours: travel assistant persona + "always use tools, never guess numbers
   from memory" (models hallucinate rates) + short answers with source named.
 
-## 7. Gotchas we actually hit
+## 7. Tool safety (local/powerful tools)
+- An LLM with bash + file read will eventually get a malicious or confused
+  instruction (prompt injection) — so jail first, wire second.
+- `read_file`: resolve the path and require it to stay under project root
+  (`is_relative_to`); `../../.ssh/id_rsa` returns an error string, not data.
+- `bash`: fixed cwd (project root), 30s timeout, truncated output, small
+  denylist (`rm -rf`, `sudo`, …). Denylists are theater against a real
+  adversary — the cwd jail + timeout do the real work.
+- Tools return error **strings**, never raise: a raised exception fails the
+  whole run, an error string lets the model recover and try again.
+
+## 8. Gotchas we actually hit
 - **Wrong interpreter**: system python has no deps → `ModuleNotFoundError`.
   Always `.venv/bin/python` or `uv run`.
 - **`getpass` on import crashes non-tty runs** (`EOFError`). Read keys from
