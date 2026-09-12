@@ -58,6 +58,9 @@
   entrypoint — then CLI, API server, and Studio all get it.
 - Ours: travel assistant persona + "always use tools, never guess numbers
   from memory" (models hallucinate rates) + short answers with source named.
+- AGENTS.md is injected into the system prompt at startup (read once,
+  appended under a header). A model can't follow conventions it can't see —
+  this is the same trick Cursor/Claude use.
 
 ## 7. Tool safety (local/powerful tools)
 - An LLM with bash + file read will eventually get a malicious or confused
@@ -69,8 +72,17 @@
   adversary — the cwd jail + timeout do the real work.
 - Tools return error **strings**, never raise: a raised exception fails the
   whole run, an error string lets the model recover and try again.
+  Seen live: `patch_file` with `old_text=""` returned
+  "matches 914 times, must be unique" — the model re-anchored and carried on.
 
-## 8. Gotchas we actually hit
+## 8. Skills (progressive disclosure)
+- `skills/<name>/SKILL.md` with frontmatter (`name`, `description`).
+- `list_skills` returns name + description lines (cheap, model calls it to
+  discover); `load_skill(name)` returns the full instructions, jailed to
+  `skills/`. Bodies stay out of context until relevant — same pattern as
+  Claude Code skills.
+
+## 9. Gotchas we actually hit
 - **Wrong interpreter**: system python has no deps → `ModuleNotFoundError`.
   Always `.venv/bin/python` or `uv run`.
 - **`getpass` on import crashes non-tty runs** (`EOFError`). Read keys from
