@@ -1,7 +1,7 @@
 import httpx
 from langchain_core.tools import tool
 
-_HEADERS = {"User-Agent": "weather-agent/0.1 (learning project)"}
+_HEADERS = {"User-Agent": "abduls-pi/0.1 (learning project)"}
 
 FAILURE_MARKERS = ("No Wikipedia article",)
 

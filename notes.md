@@ -122,7 +122,7 @@
 - `langgraph dev` needs the Docker daemon; "worked yesterday, broken today"
   was Docker Desktop down. The graph itself imported fine standalone — always
   split graph bugs from server bugs first:
-  `.venv/bin/python -c "import weather_agent.graph"`.
+  `.venv/bin/python -c "import abduls_pi.graph"`.
 - The server API is all curl-able (`:2024`): `GET /threads/{id}/state`
   (next node, per-task errors, messages), `GET .../history?limit=N`
   (checkpoint trail), `GET .../runs` (statuses),

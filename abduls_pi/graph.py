@@ -6,11 +6,11 @@ from langgraph.graph import END, START, MessagesState, StateGraph
 from langgraph.prebuilt import ToolNode
 from langgraph.types import Command
 
-from weather_agent.config import REASONING_EFFORT
-from weather_agent.mcp import load_mcp_tools
-from weather_agent.policies import POLICIES, _batch_failed
-from weather_agent.prompt import build_system
-from weather_agent.tools import bash, call_weather_api, convert_currency, fetch_exa, list_skills, load_skill, patch_file, read_file, search_exa, search_wikipedia, update_todos, write_file
+from abduls_pi.config import REASONING_EFFORT
+from abduls_pi.mcp import load_mcp_tools
+from abduls_pi.policies import POLICIES, _batch_failed
+from abduls_pi.prompt import build_system
+from abduls_pi.tools import bash, call_weather_api, convert_currency, fetch_exa, list_skills, load_skill, patch_file, read_file, search_exa, search_wikipedia, update_todos, write_file
 
 try:
     MCP_TOOLS = load_mcp_tools()

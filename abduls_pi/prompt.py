@@ -2,8 +2,8 @@
 
 from langchain_core.messages import SystemMessage
 
-from weather_agent.tools._sandbox import ROOT
-from weather_agent.tools.skills import skill_overview
+from abduls_pi.tools._sandbox import ROOT
+from abduls_pi.tools.skills import skill_overview
 
 # One rule per entry: diffable, orderable, individually removable.
 RULES = [

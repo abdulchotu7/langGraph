@@ -10,16 +10,16 @@ Tech stack:
 - graph: langgraph
 
 Layout (standard package, flat):
-- weather_agent/config.py — env loading, fails fast if keys missing
-- weather_agent/tools/ — one file per tool, exported via __init__.py
-- weather_agent/mcp.py — MCP server loading (fff file search)
-- weather_agent/prompt.py — system prompt assembly (rules + AGENTS.md + skill menu)
-- weather_agent/graph.py — state, nodes, policy table wiring (pure graph definition, no I/O on import)
-- weather_agent/policies.py — review policies (approval gate, failure surrender); append here, review stays untouched
-- weather_agent/main.py — entrypoint only
+- abduls_pi/config.py — env loading, fails fast if keys missing
+- abduls_pi/tools/ — one file per tool, exported via __init__.py
+- abduls_pi/mcp.py — MCP server loading (fff file search)
+- abduls_pi/prompt.py — system prompt assembly (rules + AGENTS.md + skill menu)
+- abduls_pi/graph.py — state, nodes, policy table wiring (pure graph definition, no I/O on import)
+- abduls_pi/policies.py — review policies (approval gate, failure surrender); append here, review stays untouched
+- abduls_pi/main.py — entrypoint only
 
 Commands:
-- run: `uv run weather-agent` or `.venv/bin/python -m weather_agent.main`
+- run: `uv run abduls-pi` or `.venv/bin/python -m abduls_pi.main`
 - Never run with system `python3` (Apple 3.9, no deps) — always `.venv` or `uv run`
 
 Env (.env, see .env.example):
@@ -30,7 +30,7 @@ Env (.env, see .env.example):
 Conventions:
 - Nodes take full state, return a state update dict (e.g. `{"messages": ...}`).
 - Never pass a raw chat model to add_node — wrap it in a function.
-- Absolute imports inside the package (`from weather_agent.tools import ...`) —
+- Absolute imports inside the package (`from abduls_pi.tools import ...`) —
   the LangGraph server loads graph.py by file path, so relative imports crash
   with `GraphLoadError: attempted relative import with no known parent package`.
 - No graph.invoke() at import time — I/O lives in main.py under __main__.

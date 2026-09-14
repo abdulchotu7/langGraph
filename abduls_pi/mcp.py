@@ -7,7 +7,7 @@ from pathlib import Path
 
 from langchain_mcp_adapters.client import MultiServerMCPClient
 
-from weather_agent.tools._sandbox import ROOT
+from abduls_pi.tools._sandbox import ROOT
 
 
 def load_mcp_tools() -> list:

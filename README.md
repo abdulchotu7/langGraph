@@ -27,11 +27,11 @@ Requires Python ≥3.12 (`uv` handles it). Never use system `python3`.
 
 ```bash
 # CLI — single question, terminal approvals (y/n)
-uv run weather-agent
-uv run weather-agent "write demo.txt containing pineapple"
+uv run abduls-pi
+uv run abduls-pi "write demo.txt containing pineapple"
 
 # Work on a REAL project (reads, writes, bash, conventions all follow it)
-WORKSPACE=~/Projects/my-app uv run weather-agent "…"
+WORKSPACE=~/Projects/my-app uv run abduls-pi "…"
 # tip: use a scratch git branch, keep approvals on
 
 # LangGraph Studio (hot-reload dev server, thread panel, Approve/Deny UI)
@@ -54,14 +54,14 @@ langgraph up         # API :8123
 ## Layout
 
 ```
-weather_agent/config.py    env loading, fails fast on missing keys
-weather_agent/tools/       one file per tool (bash, read, write, patch,
+abduls_pi/config.py    env loading, fails fast on missing keys
+abduls_pi/tools/       one file per tool (bash, read, write, patch,
                            exa search/fetch, plan, skills, weather, …)
-weather_agent/mcp.py       fff file-search via MCP (skipped if binary missing)
-weather_agent/prompt.py    system prompt: RULES + target AGENTS.md + skill menu
-weather_agent/graph.py     state, nodes, wiring (policies live in policies.py)
-weather_agent/policies.py  approval gate + failure surrender (append here)
-weather_agent/main.py      CLI entrypoint (own in-memory persistence)
+abduls_pi/mcp.py       fff file-search via MCP (skipped if binary missing)
+abduls_pi/prompt.py    system prompt: RULES + target AGENTS.md + skill menu
+abduls_pi/graph.py     state, nodes, wiring (policies live in policies.py)
+abduls_pi/policies.py  approval gate + failure surrender (append here)
+abduls_pi/main.py      CLI entrypoint (own in-memory persistence)
 notes.md                   learnings, incidents, gotchas
 ```
 

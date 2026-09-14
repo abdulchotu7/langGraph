@@ -3,7 +3,7 @@
   "dependencies": ["."],
   "python_version": "3.12",
   "graphs": {
-    "weather_agent": "./weather_agent/graph.py:graph"
+    "abduls_pi": "./abduls_pi/graph.py:graph"
   },
   "env": ".env"
 }

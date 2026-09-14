@@ -1,4 +1,4 @@
-"""Entrypoint: uv run weather-agent | .venv/bin/python -m weather_agent.main"""
+"""Entrypoint: uv run weather-agent | .venv/bin/python -m abduls_pi.main"""
 
 import asyncio
 import sys
@@ -6,8 +6,8 @@ import sys
 from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.types import Command
 
-from weather_agent import config as _config  # noqa: F401 — validates env on import
-from weather_agent.graph import builder
+from abduls_pi import config as _config  # noqa: F401 — validates env on import
+from abduls_pi.graph import builder
 
 
 async def amain(question: str) -> None:

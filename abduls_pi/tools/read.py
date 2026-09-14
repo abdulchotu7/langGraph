@@ -1,6 +1,6 @@
 from langchain_core.tools import tool
 
-from weather_agent.tools._sandbox import allowed_read
+from abduls_pi.tools._sandbox import allowed_read
 
 FAILURE_MARKERS = ("Error",)
 
