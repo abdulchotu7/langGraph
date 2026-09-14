@@ -103,6 +103,13 @@
   Automatic Function Calling = the SDK auto-looping tool calls internally.
   Comes from inside langchain_google_genai, harmless when we run our own
   LangGraph tool loop. Ignorable noise.
+- **MCP tools are async-only**: `langchain-mcp-adapters` tools define
+  `_arun` but no `_run`, so any MCP call under sync `graph.invoke()` dies
+  with `NotImplementedError: StructuredTool does not support sync
+  invocation`. The CLI must use `await graph.ainvoke()` (the dev server is
+  async, which is why this only bites locally). Found live: a deny-path
+  test crashed only *after* refusing — the model reached for MCP grep to
+  suggest an alternative.
 
 ## 11. langgraph dev ops (learned debugging a stuck run)
 - `langgraph dev` needs the Docker daemon; "worked yesterday, broken today"
