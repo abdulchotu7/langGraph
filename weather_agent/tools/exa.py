@@ -27,3 +27,25 @@ def search_exa(query: str) -> str:
         highlights = " ".join(r.get("highlights", [])[:3])
         out.append(f"{r.get('title', 'untitled')} — {r.get('url', '')}\n{highlights}")
     return "\n\n".join(out)
+
+
+@tool
+def fetch_exa(url: str) -> str:
+    """Fetch a webpage's full content as highlights via Exa. Use after search_exa when highlights aren't enough. Args: url: page URL."""
+    if not EXA_API_KEY:
+        return "Error: EXA_API_KEY is not set. Add it to .env."
+    try:
+        res = httpx.post(
+            "https://api.exa.ai/contents",
+            headers={"x-api-key": EXA_API_KEY},
+            json={"urls": [url], "highlights": True},
+            timeout=30,
+        )
+        data = res.json()
+    except Exception as e:
+        return f"Error: Exa fetch failed: {e}"
+    results = data.get("results", [])
+    if not results:
+        return f"No content found for '{url}'."
+    text = " ".join(results[0].get("highlights", []))[:8000]
+    return f"{results[0].get('title', 'untitled')} — {url}\n{text}"
