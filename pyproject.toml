@@ -11,6 +11,7 @@ dependencies = [
     "langchain-mcp-adapters>=0.3",
     "langgraph>=1.2",
     "python-dotenv>=1.2",
+    "langgraph-cli[inmem]"
 ]
 
 [project.scripts]
