@@ -14,7 +14,8 @@ Layout (standard package, flat):
 - weather_agent/tools/ — one file per tool, exported via __init__.py
 - weather_agent/mcp.py — MCP server loading (fff file search)
 - weather_agent/prompt.py — system prompt assembly (rules + AGENTS.md + skill menu)
-- weather_agent/graph.py — pure graph definition (no I/O on import)
+- weather_agent/graph.py — state, nodes, policy table wiring (pure graph definition, no I/O on import)
+- weather_agent/policies.py — review policies (approval gate, failure surrender); append here, review stays untouched
 - weather_agent/main.py — entrypoint only
 
 Commands:
