@@ -16,6 +16,7 @@ def _required(name: str) -> str:
 
 GOOGLE_API_KEY: str = _required("GOOGLE_API_KEY")
 WEATHER_API_KEY: str = _required("WEATHER_API_KEY")
+EXA_API_KEY: str = os.environ.get("EXA_API_KEY", "")
 
 # minimal | low | medium | high. Higher = deeper thinking, slower, pricier.
 REASONING_EFFORT: str = os.environ.get("REASONING_EFFORT", "low")
