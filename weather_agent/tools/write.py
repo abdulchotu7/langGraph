@@ -2,6 +2,8 @@ from langchain_core.tools import tool
 
 from weather_agent.tools._sandbox import ROOT
 
+FAILURE_MARKERS = ("Error",)
+
 
 @tool
 def write_file(file_path: str, content: str) -> str:

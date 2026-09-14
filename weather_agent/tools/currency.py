@@ -1,6 +1,8 @@
 import httpx
 from langchain_core.tools import tool
 
+FAILURE_MARKERS = ("Currency conversion failed",)
+
 
 @tool
 def convert_currency(amount: float, from_currency: str, to_currency: str) -> str:

@@ -5,6 +5,8 @@ from langchain_core.tools import tool
 
 from weather_agent.tools._sandbox import GLOBAL_SKILLS, ROOT
 
+FAILURE_MARKERS = ("Error",)
+
 # Project skills first, then the user's global collection. Project wins on collision.
 
 

@@ -3,6 +3,8 @@ from langchain_core.tools import tool
 
 from weather_agent.config import WEATHER_API_KEY
 
+FAILURE_MARKERS = ("Weather lookup failed",)
+
 
 @tool
 def call_weather_api(query: str) -> str:

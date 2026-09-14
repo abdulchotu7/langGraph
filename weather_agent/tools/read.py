@@ -2,6 +2,8 @@ from langchain_core.tools import tool
 
 from weather_agent.tools._sandbox import allowed_read
 
+FAILURE_MARKERS = ("Error",)
+
 
 @tool
 def read_file(file_path: str) -> str:

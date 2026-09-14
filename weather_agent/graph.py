@@ -1,8 +1,6 @@
 """LangGraph agent: model <-> review <-> tools loop, human approval before edits."""
 
-import re
-
-from langchain_core.messages import SystemMessage, ToolMessage
+from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langgraph.graph import END, START, MessagesState, StateGraph
 from langgraph.prebuilt import ToolNode
@@ -11,7 +9,7 @@ from langgraph.types import Command, interrupt
 from weather_agent.config import REASONING_EFFORT
 from weather_agent.mcp import load_mcp_tools
 from weather_agent.prompt import build_system
-from weather_agent.tools import bash, call_weather_api, convert_currency, fetch_exa, list_skills, load_skill, patch_file, read_file, search_exa, search_wikipedia, write_file
+from weather_agent.tools import FAILURE_MARKERS, bash, call_weather_api, convert_currency, fetch_exa, list_skills, load_skill, patch_file, read_file, search_exa, search_wikipedia, write_file
 
 try:
     MCP_TOOLS = load_mcp_tools()
@@ -37,9 +35,7 @@ def call_model(state: AgentState):
     return {"messages": model_with_tools.invoke(messages)}
 
 
-FAIL_MARKERS = ("Error", "Currency conversion failed", "Weather lookup failed", "No Exa results", "No content found", "No Wikipedia article")
 MAX_FAILURES = 3
-SOURCE_NUDGE = "Source check: your answer contains numbers but no page was fetched"
 
 
 def _batch_failed(messages: list) -> bool:
@@ -49,24 +45,10 @@ def _batch_failed(messages: list) -> bool:
         if m.type != "tool":
             break
         batch.append(m)
-    return bool(batch) and all(str(m.content).startswith(FAIL_MARKERS) for m in batch)
+    return bool(batch) and all(str(m.content).startswith(FAILURE_MARKERS) for m in batch)
 
 
-def _needs_sources(messages: list) -> bool:
-    """Final answer has digits, search was used, but nothing was ever fetched. Once only."""
-    last = messages[-1]
-    if getattr(last, "tool_calls", None):
-        return False
-    text = last.content if isinstance(last.content, str) else str(last.content)
-    if not re.search(r"\d", text):
-        return False
-    called, nudged = set(), False
-    for m in messages:
-        for c in (getattr(m, "tool_calls", None) or []):
-            called.add(c["name"])
-        if m.type == "system" and str(m.content).startswith("Source check:"):
-            nudged = True
-    return "search_exa" in called and "fetch_exa" not in called and not nudged
+STOP_NUDGE = "[automated check] Stop: one approach has failed 3 times. Do not call more tools. Report what you tried and ask the user how to proceed."
 
 
 EDIT_TOOLS = {"write_file", "patch_file"}
@@ -92,30 +74,25 @@ def _approved(value) -> bool:
     return False
 
 
-def review(state: AgentState) -> Command:
-    calls = getattr(state["messages"][-1], "tool_calls", None) or []
-    failures = state.get("consecutive_failures", 0) + 1 if _batch_failed(state["messages"]) else 0
-    if failures >= MAX_FAILURES:
-        return Command(
-            goto="model",
-            update={
-                "messages": [SystemMessage(content="Stop: one approach has failed 3 times. Do not call more tools. Report what you tried and ask the user how to proceed.")],
-                "consecutive_failures": 0,
-            },
-        )
-    if not calls:
-        if _needs_sources(state["messages"]):
-            return Command(
-                goto="model",
-                update={
-                    "messages": [SystemMessage(content=SOURCE_NUDGE + ": call fetch_exa on the key URLs behind those digits (or drop/flag numbers you cannot source), then answer again.")],
-                    "consecutive_failures": failures,
-                },
-            )
-        return Command(goto=END, update={"consecutive_failures": failures})
+def _stop_policy(state: AgentState, calls: list, failures: int) -> Command | None:
+    if failures < MAX_FAILURES:
+        return None
+    # Answer pending calls + end on a user turn: Gemini rejects a
+    # trailing AI/system turn ("model prefilling" error).
+    skipped = [ToolMessage(content="Skipped: repeated failures, do not retry.", tool_call_id=c["id"]) for c in calls]
+    return Command(
+        goto="model",
+        update={
+            "messages": skipped + [HumanMessage(content=STOP_NUDGE)],
+            "consecutive_failures": 0,
+        },
+    )
+
+
+def _approval_policy(state: AgentState, calls: list, failures: int) -> Command | None:
     risky = [c for c in calls if _risky(c)]
     if not risky:
-        return Command(goto="tools", update={"consecutive_failures": failures})
+        return None
     decision = interrupt({
         "question": "Allow these file edits / shell commands?",
         "tool_calls": [{"name": c["name"], "args": c["args"]} for c in risky],
@@ -129,6 +106,22 @@ def review(state: AgentState) -> Command:
             "consecutive_failures": failures,
         },
     )
+
+
+# Ordered: first match wins. New policies append here; review stays untouched.
+POLICIES = [_stop_policy, _approval_policy]
+
+
+def review(state: AgentState) -> Command:
+    calls = getattr(state["messages"][-1], "tool_calls", None) or []
+    failures = state.get("consecutive_failures", 0) + 1 if _batch_failed(state["messages"]) else 0
+    for policy in POLICIES:
+        verdict = policy(state, calls, failures)
+        if verdict is not None:
+            return verdict
+    if not calls:
+        return Command(goto=END, update={"consecutive_failures": failures})
+    return Command(goto="tools", update={"consecutive_failures": failures})
 
 
 builder = StateGraph(AgentState)

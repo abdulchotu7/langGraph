@@ -110,6 +110,13 @@
   async, which is why this only bites locally). Found live: a deny-path
   test crashed only *after* refusing — the model reached for MCP grep to
   suggest an alternative.
+- **No mid-conversation SystemMessage with Gemini**: a turn ending
+  `AI → System` throws `does not support model prefilling — final turn
+  must be user or function response`. The initial system prompt (position 0)
+  is fine; injected nudges must be `HumanMessage` (trailing user turn is
+  always valid). If tool calls are pending when you nudge, answer each with
+  a `ToolMessage` first, then the human nudge — found live when the source
+  checker crashed a 5-search run that was otherwise working.
 
 ## 11. langgraph dev ops (learned debugging a stuck run)
 - `langgraph dev` needs the Docker daemon; "worked yesterday, broken today"
@@ -171,6 +178,17 @@
   (search/fetch/agent) — packaging, not power. For a small model, 1 tool
   with 1 param beats 4 tools with dozens of params (fewer decisions =
   fewer loops). No new deps: httpx was already there, skipped exa-py.
+
+## 15. Enforcement must be invisible (source-check rise and fall)
+- Added a review bounce: digits in answer + searched-but-never-fetched →
+  send the model back. Worked mechanically (5 searches → 3 fetches →
+  sourced table) but shipped as a fake `HumanMessage` ("[automated
+  check]") to satisfy Gemini turn rules — machine scaffolding wearing the
+  user's face in Studio. Right call, wrong visibility; deleted it.
+- Lesson: in-transcript nudges spoil trust. Real options are habit (prompt
+  + tool design, no code) or hidden loops (subgraph verify whose scratch
+  never enters the main thread). Kept: prompt research standard + failure
+  counter + approval gate. Re-add as subgraph if fabrication recurs.
 
 ## 15. Checkpointers & Persistence
 - **Definition**: Checkpointers save a snapshot of graph state at each super-step boundary, organized into threads (`thread_id`).

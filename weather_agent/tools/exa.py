@@ -3,6 +3,8 @@ from langchain_core.tools import tool
 
 from weather_agent.config import EXA_API_KEY
 
+FAILURE_MARKERS = ("Error", "No Exa results", "No content found")
+
 
 @tool
 def search_exa(query: str) -> str:

@@ -3,6 +3,8 @@ from langchain_core.tools import tool
 
 _HEADERS = {"User-Agent": "weather-agent/0.1 (learning project)"}
 
+FAILURE_MARKERS = ("No Wikipedia article",)
+
 
 @tool
 def search_wikipedia(query: str) -> str:
