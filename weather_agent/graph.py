@@ -24,11 +24,29 @@ model_with_tools = model.bind_tools(ALL_TOOLS)
 SYSTEM = build_system()
 
 
-def call_model(state: MessagesState):
+class AgentState(MessagesState):
+    consecutive_failures: int
+
+
+def call_model(state: AgentState):
     messages = state["messages"]
     if not any(isinstance(m, SystemMessage) for m in messages):
         messages = [SYSTEM, *messages]
     return {"messages": model_with_tools.invoke(messages)}
+
+
+FAIL_MARKERS = ("Error", "Currency conversion failed", "Weather lookup failed", "No Exa results", "No content found", "No Wikipedia article")
+MAX_FAILURES = 3
+
+
+def _batch_failed(messages: list) -> bool:
+    """True if the previous turn's tool results were all failures."""
+    batch = []
+    for m in reversed(messages[:-1]):  # skip pending AI message
+        if m.type != "tool":
+            break
+        batch.append(m)
+    return bool(batch) and all(str(m.content).startswith(FAIL_MARKERS) for m in batch)
 
 
 EDIT_TOOLS = {"write_file", "patch_file"}
@@ -54,26 +72,38 @@ def _approved(value) -> bool:
     return False
 
 
-def review(state: MessagesState) -> Command:
+def review(state: AgentState) -> Command:
     calls = getattr(state["messages"][-1], "tool_calls", None) or []
+    failures = state.get("consecutive_failures", 0) + 1 if _batch_failed(state["messages"]) else 0
+    if failures >= MAX_FAILURES:
+        return Command(
+            goto="model",
+            update={
+                "messages": [SystemMessage(content="Stop: one approach has failed 3 times. Do not call more tools. Report what you tried and ask the user how to proceed.")],
+                "consecutive_failures": 0,
+            },
+        )
     if not calls:
-        return Command(goto=END)
+        return Command(goto=END, update={"consecutive_failures": failures})
     risky = [c for c in calls if _risky(c)]
     if not risky:
-        return Command(goto="tools")
+        return Command(goto="tools", update={"consecutive_failures": failures})
     decision = interrupt({
         "question": "Allow these file edits / shell commands?",
         "tool_calls": [{"name": c["name"], "args": c["args"]} for c in risky],
     })
     if _approved(decision):
-        return Command(goto="tools")
+        return Command(goto="tools", update={"consecutive_failures": failures})
     return Command(
         goto="model",
-        update={"messages": [ToolMessage(content="Denied by user. Do not perform it; explain briefly and suggest a safer alternative.", tool_call_id=c["id"]) for c in calls]},
+        update={
+            "messages": [ToolMessage(content="Denied by user. Do not perform it; explain briefly and suggest a safer alternative.", tool_call_id=c["id"]) for c in calls],
+            "consecutive_failures": failures,
+        },
     )
 
 
-builder = StateGraph(MessagesState)
+builder = StateGraph(AgentState)
 builder.add_node("model", call_model)
 builder.add_node("review", review)
 builder.add_node("tools", ToolNode(ALL_TOOLS))
