@@ -1,5 +1,7 @@
 """LangGraph agent: model <-> review <-> tools loop, human approval before edits."""
 
+import re
+
 from langchain_core.messages import SystemMessage, ToolMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langgraph.graph import END, START, MessagesState, StateGraph
@@ -37,6 +39,7 @@ def call_model(state: AgentState):
 
 FAIL_MARKERS = ("Error", "Currency conversion failed", "Weather lookup failed", "No Exa results", "No content found", "No Wikipedia article")
 MAX_FAILURES = 3
+SOURCE_NUDGE = "Source check: your answer contains numbers but no page was fetched"
 
 
 def _batch_failed(messages: list) -> bool:
@@ -47,6 +50,23 @@ def _batch_failed(messages: list) -> bool:
             break
         batch.append(m)
     return bool(batch) and all(str(m.content).startswith(FAIL_MARKERS) for m in batch)
+
+
+def _needs_sources(messages: list) -> bool:
+    """Final answer has digits, search was used, but nothing was ever fetched. Once only."""
+    last = messages[-1]
+    if getattr(last, "tool_calls", None):
+        return False
+    text = last.content if isinstance(last.content, str) else str(last.content)
+    if not re.search(r"\d", text):
+        return False
+    called, nudged = set(), False
+    for m in messages:
+        for c in (getattr(m, "tool_calls", None) or []):
+            called.add(c["name"])
+        if m.type == "system" and str(m.content).startswith("Source check:"):
+            nudged = True
+    return "search_exa" in called and "fetch_exa" not in called and not nudged
 
 
 EDIT_TOOLS = {"write_file", "patch_file"}
@@ -84,6 +104,14 @@ def review(state: AgentState) -> Command:
             },
         )
     if not calls:
+        if _needs_sources(state["messages"]):
+            return Command(
+                goto="model",
+                update={
+                    "messages": [SystemMessage(content=SOURCE_NUDGE + ": call fetch_exa on the key URLs behind those digits (or drop/flag numbers you cannot source), then answer again.")],
+                    "consecutive_failures": failures,
+                },
+            )
         return Command(goto=END, update={"consecutive_failures": failures})
     risky = [c for c in calls if _risky(c)]
     if not risky:
