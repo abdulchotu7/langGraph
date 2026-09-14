@@ -9,7 +9,7 @@ from langgraph.types import Command, interrupt
 from weather_agent.config import REASONING_EFFORT
 from weather_agent.mcp import load_mcp_tools
 from weather_agent.prompt import build_system
-from weather_agent.tools import FAILURE_MARKERS, bash, call_weather_api, convert_currency, fetch_exa, list_skills, load_skill, patch_file, read_file, search_exa, search_wikipedia, write_file
+from weather_agent.tools import FAILURE_MARKERS, bash, call_weather_api, convert_currency, fetch_exa, list_skills, load_skill, patch_file, read_file, search_exa, search_wikipedia, update_todos, write_file
 
 try:
     MCP_TOOLS = load_mcp_tools()
@@ -17,7 +17,7 @@ except Exception as e:  # fff-mcp missing (e.g. prod container): run degraded, d
     print(f"Warning: MCP tools unavailable ({e}). Continuing with local tools only.")
     MCP_TOOLS = []
 
-ALL_TOOLS = [bash, call_weather_api, convert_currency, fetch_exa, list_skills, load_skill, patch_file, read_file, search_exa, search_wikipedia, write_file, *MCP_TOOLS]
+ALL_TOOLS = [bash, call_weather_api, convert_currency, fetch_exa, list_skills, load_skill, patch_file, read_file, search_exa, search_wikipedia, update_todos, write_file, *MCP_TOOLS]
 
 model = ChatGoogleGenerativeAI(model="gemini-3.5-flash-lite", max_retries=2, timeout=60, reasoning_effort=REASONING_EFFORT)
 model_with_tools = model.bind_tools(ALL_TOOLS)
@@ -26,6 +26,7 @@ SYSTEM = build_system()
 
 class AgentState(MessagesState):
     consecutive_failures: int
+    todos: list
 
 
 def call_model(state: AgentState):

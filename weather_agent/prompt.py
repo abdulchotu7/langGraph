@@ -27,7 +27,10 @@ RULES = [
     "If the request is ambiguous, ask the user before acting — do not guess. ",
     "File edits and mutating shell commands pause for user approval, so "
     "propose them plainly instead of working around the pause. ",
-    "Keep changes minimal: the smallest diff that solves the task, no extras. ",
+    "Keep changes minimal: the smallest diff that solves the task, no extras. "
+    "For multi-step tasks, track the plan with update_todos (subjects plus "
+    "pending/in_progress/completed, one in_progress at a time) and check "
+    "steps off as you finish. ",
     "Verify with a real run before claiming done, and state what remains "
     "unverified. ",
     "If one approach fails 3 times, stop and report what you tried — "

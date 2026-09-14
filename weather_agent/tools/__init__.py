@@ -6,6 +6,8 @@ from weather_agent.tools.exa import FAILURE_MARKERS as _exa_markers
 from weather_agent.tools.exa import fetch_exa, search_exa
 from weather_agent.tools.patch import FAILURE_MARKERS as _patch_markers
 from weather_agent.tools.patch import patch_file
+from weather_agent.tools.plan import FAILURE_MARKERS as _plan_markers
+from weather_agent.tools.plan import update_todos
 from weather_agent.tools.read import FAILURE_MARKERS as _read_markers
 from weather_agent.tools.read import read_file
 from weather_agent.tools.skills import FAILURE_MARKERS as _skills_markers
@@ -21,8 +23,8 @@ from weather_agent.tools.write import write_file
 # failure-counter aggregates instead of hardcoding mirrored strings.
 FAILURE_MARKERS: tuple[str, ...] = tuple(
     dict.fromkeys(
-        _bash_markers + _currency_markers + _exa_markers + _patch_markers + _read_markers + _skills_markers + _weather_markers + _wikipedia_markers + _write_markers
+        _bash_markers + _currency_markers + _exa_markers + _patch_markers + _plan_markers + _read_markers + _skills_markers + _weather_markers + _wikipedia_markers + _write_markers
     )
 )
 
-__all__ = ["bash", "call_weather_api", "convert_currency", "fetch_exa", "list_skills", "load_skill", "patch_file", "read_file", "search_exa", "search_wikipedia", "write_file"]
+__all__ = ["bash", "call_weather_api", "convert_currency", "fetch_exa", "list_skills", "load_skill", "patch_file", "read_file", "search_exa", "search_wikipedia", "update_todos", "write_file"]

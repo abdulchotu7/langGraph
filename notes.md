@@ -189,6 +189,10 @@
   + tool design, no code) or hidden loops (subgraph verify whose scratch
   never enters the main thread). Kept: prompt research standard + failure
   counter + approval gate. Re-add as subgraph if fabrication recurs.
+- Same sin recurred with the plan tool's `[plan]` echo (fake-human) — fixed
+  by riding the render inside the required `ToolMessage` (collapsed tool
+  result in Studio, still visible to the model). Only remaining fake-human
+  message: the rare terminal stop-nudge.
 
 ## 15. Checkpointers & Persistence
 - **Definition**: Checkpointers save a snapshot of graph state at each super-step boundary, organized into threads (`thread_id`).
