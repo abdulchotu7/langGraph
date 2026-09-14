@@ -2,8 +2,11 @@
 execution (bash) stays jailed to the project."""
 
 from pathlib import Path
+import os
 
-ROOT = Path(__file__).resolve().parents[2]
+# Target project for the agent. Defaults to this repo; point WORKSPACE at
+# any directory to operate on a real project instead.
+ROOT = Path(os.environ.get("WORKSPACE") or Path(__file__).resolve().parents[2]).resolve()
 GLOBAL_SKILLS = Path.home() / ".agents" / "skills"
 
 

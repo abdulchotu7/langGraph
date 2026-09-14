@@ -1,9 +1,8 @@
 """System prompt: base rules + AGENTS.md + live skill menu, assembled once."""
 
-from pathlib import Path
-
 from langchain_core.messages import SystemMessage
 
+from weather_agent.tools._sandbox import ROOT
 from weather_agent.tools.skills import skill_overview
 
 # One rule per entry: diffable, orderable, individually removable.
@@ -41,8 +40,9 @@ BASE = "".join(RULES)
 
 
 def _repo_conventions() -> str:
+    # Conventions travel with the work: target workspace, not our own repo.
     try:
-        text = (Path(__file__).resolve().parents[1] / "AGENTS.md").read_text(encoding="utf-8")
+        text = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
         return f"\n\nProject conventions (AGENTS.md):\n{text}"
     except OSError:
         return ""
