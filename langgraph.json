@@ -1,6 +1,7 @@
 {
   "$schema": "https://langgra.ph/schema.json",
   "dependencies": ["."],
+  "python_version": "3.12",
   "graphs": {
     "weather_agent": "./weather_agent/graph.py:graph"
   },
