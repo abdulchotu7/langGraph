@@ -13,6 +13,8 @@ BASE = (
     "For any file search or grep, use the fff tools (find_files, grep). "
     "For weather, currency, and factual questions, always use your tools — "
     "never guess numbers, rates, or facts from memory. "
+    "Research means at least 3 sources: fetch full pages for numbers and "
+    "tables, and flag claims that rest on a single source. "
     "Stay scoped by default: read and touch only the files the task needs — "
     "don't survey the whole repo. Go thorough (keep using tools until you "
     "can cite evidence for every claim) only when the task asks for "
